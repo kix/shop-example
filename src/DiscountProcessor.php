@@ -5,24 +5,24 @@ namespace App;
 class DiscountProcessor
 {
     /**
-     * @var DiscountRule[]
+     * @var DiscountRuleInterface[]
      */
     private $rules;
 
     /**
      * DiscountProcessor constructor.
      *
-     * @param DiscountRule[] $rules
+     * @param DiscountRuleInterface[] $rules
      */
     public function __construct(array $rules)
     {
-        array_map(function(DiscountRule $rule) {
+        array_map(function(DiscountRuleInterface $rule) {
             $this->rules[] = $rule;
         }, $rules);
     }
 
     /**
-     * @return DiscountRule[]
+     * @return DiscountRuleInterface[]
      */
     public function getRules(): array
     {
