@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Money\Currency;
 use Money\Money;
 
@@ -20,13 +21,13 @@ class Cart
         }
 
         $this->discountStrategy = $strategy;
-        $this->items = [];
-        $this->discounts = [];
+        $this->items = new ArrayCollection();
+        $this->discounts = new ArrayCollection();
     }
 
     public function addItem(ItemInterface $item)
     {
-        $this->items[] = $item;
+        $this->items->add($item);
     }
 
     public function getItems()
@@ -50,13 +51,13 @@ class Cart
         // @TODO Should sort discounts
         $total = new Money(0, new Currency('EUR'));
 
-        array_map(function(ItemInterface $item) use (&$total) {
+        $this->items->map(function(ItemInterface $item) use (&$total) {
             $total = $total->add($item->getPrice());
-        }, $this->items);
+        });
 
-        array_map(function(Discount $discount) use (&$total) {
+        $this->discounts->map(function(Discount $discount) use (&$total) {
             $total = $discount->apply($total);
-        }, $this->discounts);
+        });
 
         return $total;
     }

@@ -21,14 +21,14 @@ class CartSpec extends ObjectBehavior
     {
         $this->addItem($item);
 
-        $this->getItems()->shouldBe([$item]);
+        $this->getItems()->toArray()->shouldBe([$item]);
     }
 
     function it_allows_adding_discounts(Discount $discount)
     {
         $this->addDiscount($discount);
 
-        $this->getDiscounts()->shouldBe([$discount]);
+        $this->getDiscounts()->toArray()->shouldBe([$discount]);
     }
 
     function it_returns_price_with_no_discounts(ItemInterface $item)
