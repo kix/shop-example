@@ -22,7 +22,8 @@ echo "100 + 50 + 5 + 35, 3 books by one issuer\n";
 echo "Total: {$cart->getTotal()->getAmount()} {$money->getCurrency()}\n\n";
 
 $processor = new \App\DiscountProcessor([
-    new \App\DiscountRule\BooksBySameIssuerRule()
+    new \App\DiscountRule\BooksBySameIssuerRule(),
+    new \App\DiscountRule\CartGreaterThanXRule(new \Money\Money(150, new Money\Currency('EUR'))),
 ]);
 $processor->setVerbose(true);
 
