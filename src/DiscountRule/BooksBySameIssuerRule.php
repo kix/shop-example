@@ -2,7 +2,7 @@
 
 namespace App\DiscountRule;
 
-use function Functional\pluck;
+use function Functional\{invoke,each,select};
 use App\DiscountRuleInterface;
 use App\Cart;
 use App\Discount;
@@ -12,17 +12,39 @@ use App\Discount;
  */
 class BooksBySameIssuerRule implements DiscountRuleInterface
 {
-    private $minimumAmount = 5;
+    private $minimumAmount = 3;
 
     public function matches(Cart $cart): bool
     {
-        $issuers = pluck($cart->getItems(), 'issuer');
+        $issuers = [];
 
-        var_dump($issuers);
+        each(
+            invoke(
+                invoke($cart->getItems(), 'getIssuer'),
+                'getId'
+            ),
+            function(int $id) use (&$issuers) {
+                if (!array_key_exists($id, $issuers)) {
+                    $issuers[$id] = 1;
+                    return;
+                }
+
+                $issuers[$id]++;
+            }
+        );
+
+        return count(select($issuers, function($el, $index) {
+            return $el >= $this->minimumAmount;
+        })) > 0;
     }
 
     public function getDiscount(): Discount
     {
-        // TODO: Implement getDiscount() method.
+        return Discount::forPercent(10);
+    }
+
+    public function getDescription() : ?string
+    {
+        return 'Buying 3+ books by same issuer gives 10% discount';
     }
 }

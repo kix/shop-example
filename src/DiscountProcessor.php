@@ -9,6 +9,8 @@ class DiscountProcessor
      */
     private $rules;
 
+    private $verbose;
+
     /**
      * DiscountProcessor constructor.
      *
@@ -29,12 +31,27 @@ class DiscountProcessor
         return $this->rules;
     }
 
+    public function setVerbose(bool $verbose)
+    {
+        $this->verbose = $verbose;
+    }
+
     public function process(Cart $cart)
     {
         foreach ($this->rules as $rule) {
-            if ($rule->matches($cart)) {
-                $cart->addDiscount($rule->getDiscount());
+            if ($this->verbose) {
+                echo "Checking rule ".get_class($rule)."\n";
+
             }
+
+            if ($rule->matches($cart)) {
+                echo "  + matched: ";
+                $cart->addDiscount($rule->getDiscount());
+            } else {
+                echo "  - not matched: ";
+            }
+
+            echo " - {$rule->getDescription()}\n";
         }
     }
 }

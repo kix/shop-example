@@ -14,7 +14,7 @@ class Cart
 
     private $discounts;
 
-    public function __construct(int $strategy = self::STRATEGY_PERCENT_FIRST)
+    public function __construct(array $books = [], int $strategy = self::STRATEGY_PERCENT_FIRST)
     {
         if ($strategy !== self::STRATEGY_PERCENT_FIRST) {
             throw new \InvalidArgumentException('Not supported yet, man');
@@ -23,6 +23,10 @@ class Cart
         $this->discountStrategy = $strategy;
         $this->items = new ArrayCollection();
         $this->discounts = new ArrayCollection();
+
+        array_map(function(Book $book) {
+            $this->addItem($book);
+        }, $books);
     }
 
     public function addItem(ItemInterface $item)
